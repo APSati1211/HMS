@@ -19,8 +19,15 @@ const Banner = () => {
             Book Your Appointment
           </h2>
           <p className='mt-4 text-lg text-teal-700 font-light'>
-            Connect with 100+ trusted doctors, quickly and easily.
+            Experience seamless healthcare management. Our platform connects you with a vast network of highly qualified doctors across various specialties, ensuring you receive the best care tailored to your needs.
           </p>
+          <ul className='mt-4 text-base text-teal-700 font-light list-disc list-inside'>
+            <li>Easy and quick appointment scheduling</li>
+            <li>Access to 100+ trusted and verified doctors</li>
+            <li>Secure and confidential online consultations</li>
+            <li>Personalized health recommendations</li>
+            <li>24/7 access to your health records</li>
+          </ul>
           <button
             onClick={() => { navigate('/login'); scrollTo(0, 0); }}
             className='mt-6 bg-teal-600 hover:bg-teal-700 text-white text-sm sm:text-base font-medium px-8 py-3 rounded-full transition-all shadow-md'

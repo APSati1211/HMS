@@ -92,6 +92,69 @@ const About = () => {
                         <p className="text-gray-600">Tailored recommendations to help you stay on top of your health.</p>
                     </div>
                 </div>
+
+                {/* --- OUR MILESTONES SECTION --- */}
+                <div className="text-center mt-24 mb-12">
+                    <h2 className="text-3xl font-bold text-teal-600">
+                        Our <span className="text-teal-600">Milestones</span>
+                    </h2>
+                    <p className="text-lg text-gray-600 mt-2">A journey of growth and impact.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                    {/* Milestone Card 1 */}
+                    <div className="bg-white p-8 rounded-lg shadow-md transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <h3 className="text-4xl font-bold text-teal-600 mb-3">50K+</h3>
+                        <p className="text-gray-600">Appointments Booked</p>
+                    </div>
+
+                    {/* Milestone Card 2 */}
+                    <div className="bg-white p-8 rounded-lg shadow-md transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <h3 className="text-4xl font-bold text-teal-600 mb-3">100+</h3>
+                        <p className="text-gray-600">Certified Doctors</p>
+                    </div>
+
+                    {/* Milestone Card 3 */}
+                    <div className="bg-white p-8 rounded-lg shadow-md transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <h3 className="text-4xl font-bold text-teal-600 mb-3">15+</h3>
+                        <p className="text-gray-600">Specialties Covered</p>
+                    </div>
+
+                    {/* Milestone Card 4 */}
+                    <div className="bg-white p-8 rounded-lg shadow-md transform hover:-translate-y-2 transition-transform duration-300 ease-in-out">
+                        <h3 className="text-4xl font-bold text-teal-600 mb-3">98%</h3>
+                        <p className="text-gray-600">Customer Satisfaction</p>
+                    </div>
+                </div>
+
+                {/* --- OUR PHILOSOPHY SECTION --- */}
+                <div className="text-center mt-24 mb-12">
+                    <h2 className="text-3xl font-bold text-teal-600">
+                        Our <span className="text-teal-600">Philosophy</span>
+                    </h2>
+                    <p className="text-lg text-gray-600 mt-2">Guiding principles that shape our service.</p>
+                </div>
+
+                <div className="flex flex-col md:flex-row items-start gap-12 mb-24 text-gray-700">
+                    <div className="md:w-1/2">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Patient-Centric Care</h3>
+                        <p className="text-base leading-relaxed mb-4">
+                            At HealthLife, our patients are at the heart of everything we do. We believe in a holistic approach to healthcare, focusing not just on treating illnesses but on promoting overall well-being. Our platform is designed to empower patients with easy access to information and care, fostering a proactive approach to health management.
+                        </p>
+                        <p className="text-base leading-relaxed">
+                            We are committed to creating a supportive and understanding environment where every patient feels heard, respected, and valued. Your health journey is unique, and we are here to support you every step of the way with personalized care and attention.
+                        </p>
+                    </div>
+                    <div className="md:w-1/2">
+                        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Innovation and Accessibility</h3>
+                        <p className="text-base leading-relaxed mb-4">
+                            Innovation drives us forward. We continuously explore and integrate cutting-edge technology to enhance the accessibility and efficiency of healthcare services. Our goal is to break down barriers to quality care, making it available to everyone, regardless of their location or circumstances.
+                        </p>
+                        <p className="text-base leading-relaxed">
+                            By leveraging digital solutions, we aim to simplify the healthcare process, from appointment booking to virtual consultations, ensuring that you can connect with medical professionals with unprecedented ease and speed. We are constantly evolving to meet the dynamic needs of modern healthcare.
+                        </p>
+                    </div>
+                </div>
                 
             </div>
         </div>

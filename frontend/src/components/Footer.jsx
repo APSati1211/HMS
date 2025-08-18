@@ -49,6 +49,15 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* --- Legal Links --- */}
+          <div>
+            <p className='text-lg font-semibold text-gray-800 mb-4'>Legal</p>
+            <ul className='flex flex-col gap-3'>
+              <li><Link to="/privacy-policy" className='hover:text-teal-600 transition-colors duration-300'>Privacy Policy</Link></li>
+              <li><Link to="/terms-and-conditions" className='hover:text-teal-600 transition-colors duration-300'>Terms and Conditions</Link></li>
+            </ul>
+          </div>
+
           {/* --- Get in Touch --- */}
           <div>
             <p className='text-lg font-semibold text-gray-800 mb-4'>Get in Touch</p>

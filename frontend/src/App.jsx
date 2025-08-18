@@ -14,9 +14,10 @@ import Appointment from './pages/Appointment';
 import MyProfile from './pages/MyProfile';
 import ChatPage from './pages/ChatPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import MyConsultations from './pages/MyConsultations';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
 
-// --- STEP 1: Import your new component ---
-import MyConsultations from './pages/MyConsultations'; // Replaces MyAppointments
 
 const App = () => {
   const [loading, setLoading] = useState(true);
@@ -53,17 +54,16 @@ const App = () => {
           <Route path='/login' element={<Login />} />
           <Route path='/about' element={<About />} />
           <Route path='/contact' element={<Contact />} />
+          <Route path='/privacy-policy' element={<PrivacyPolicy />} />
+          <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path='/appointment/:docId' element={<Appointment />} />
             <Route path='/my-profile' element={<MyProfile />} />
             <Route path='/chat/:chatId' element={<ChatPage />} />
-
-            {/* --- STEP 2: Update the route to use the new component --- */}
-            {/* It's also good practice to update the path for clarity */}
             <Route path='/my-consultations' element={<MyConsultations />} />
-            
+
           </Route>
         </Routes>
       </main>
