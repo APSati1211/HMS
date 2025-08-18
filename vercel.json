@@ -1,0 +1,39 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/backend/server.js"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/admin/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ],
+  "projects": [
+    {
+      "name": "backend",
+      "root": "backend",
+      "buildCommand": "npm install",
+      "outputDirectory": "dist",
+      "framework": "@vercel/node"
+    },
+    {
+      "name": "admin",
+      "root": "admin",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "framework": "vite"
+    },
+    {
+      "name": "frontend",
+      "root": "frontend",
+      "buildCommand": "npm run build",
+      "outputDirectory": "dist",
+      "framework": "vite"
+    }
+  ]
+}
