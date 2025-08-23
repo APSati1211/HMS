@@ -5,21 +5,11 @@ import userModel from "../models/userModel.js";
 import doctorModel from "../models/doctorModel.js";
 import Chat from "../models/Chat.js";
 import { v2 as cloudinary } from 'cloudinary';
-import razorpay from 'razorpay';
-import crypto from 'crypto';
-import sendEmail from "../utils/sendEmail.js"; // <-- ADD THIS LINE
+import sendEmail from "../utils/sendEmail.js"; 
 
-const razorpayInstance = new razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
-
-
-// === Chat Payment System (Corrected for New Schema) ===
-
-const initiateChatPayment = async (req, res) => {
+// === Start Chat (Replaces Payment System) ===
+const startChat = async (req, res) => {
     try {
-        // SECURITY FIX: Get userId from the auth token, not the body.
         const userId = req.user.id;
         const { doctorId } = req.body;
 
@@ -28,75 +18,26 @@ const initiateChatPayment = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Doctor is not available for chat.' });
         }
 
-        const amount = doctor.fees * 100; // Amount in paise
-        const options = {
-            amount,
-            currency: 'INR',
-            receipt: `receipt_chat_${Date.now()}`
-        };
-
-        const order = await razorpayInstance.orders.create(options);
-
-        // LOGIC FIX: Create a chat document that matches our new Chat.js schema.
-        // We create it with paymentStatus: false. It will be updated upon successful verification.
-        await Chat.create({
+        // Create a new chat session directly without payment
+        const newChat = await Chat.create({
             userId,
             doctorId,
-            amount: doctor.fees,
-            paymentStatus: false,
+            amount: 0, // No payment
+            paymentStatus: true, // Access granted immediately
             paymentDetails: {
-                orderId: order.id,
-                paymentId: null, // To be added after verification
-                signature: null  // To be added after verification
-            }
+                orderId: `order_free_${Date.now()}`,
+                paymentId: null,
+                signature: null
+            },
+            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24-hour access
         });
 
-        res.json({ success: true, order, key: process.env.RAZORPAY_KEY_ID });
+        const chat = await Chat.findById(newChat._id).populate('doctorId', 'name speciality image');
+
+        res.json({ success: true, message: 'Chat session started', chat });
     } catch (error) {
-        console.error("Payment initiation failed:", error);
-        res.status(500).json({ success: false, message: 'Payment initiation failed' });
-    }
-};
-
-const verifyChatPayment = async (req, res) => {
-    try {
-        const { razorpay_payment_id, razorpay_order_id, razorpay_signature, doctorId } = req.body;
-        // SECURITY FIX: Get userId from the auth token.
-        const userId = req.user.id;
-
-        const generatedSignature = crypto
-            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-            .update(razorpay_order_id + "|" + razorpay_payment_id)
-            .digest('hex');
-
-        if (generatedSignature !== razorpay_signature) {
-            return res.status(400).json({ success: false, message: 'Invalid payment signature' });
-        }
-
-        // LOGIC FIX: Find the chat by the orderId and update it to match our new schema.
-        const updatedChat = await Chat.findOneAndUpdate(
-            { 
-                userId: userId,
-                doctorId: doctorId,
-                "paymentDetails.orderId": razorpay_order_id 
-            },
-            { 
-                paymentStatus: true,
-                "paymentDetails.paymentId": razorpay_payment_id,
-                "paymentDetails.signature": razorpay_signature,
-                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24-hour access
-            },
-            { new: true } // Return the updated document
-        ).populate('doctorId', 'name speciality image');
-
-        if (!updatedChat) {
-            return res.status(404).json({ success: false, message: 'Chat session not found' });
-        }
-
-        res.json({ success: true, message: 'Chat access granted', chat: updatedChat });
-    } catch (error) {
-        console.error("Payment verification failed:", error);
-        res.status(500).json({ success: false, message: 'Payment verification failed' });
+        console.error("Chat initiation failed:", error);
+        res.status(500).json({ success: false, message: 'Chat initiation failed' });
     }
 };
 
@@ -131,7 +72,7 @@ const updateProfile = async (req, res) => {
             updateData.address = JSON.parse(address);
         }
         if (imageFile) {
-            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image", folder: "user_profiles"});
+            const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image", folder: "user_profiles" });
             updateData.image = imageUpload.secure_url;
         }
         await userModel.findByIdAndUpdate(userId, updateData);
@@ -298,12 +239,11 @@ const loginUser = async (req, res) => {
 // === Final Export List ===
 export {
     loginUser,
-     requestUserRegistrationOTP, // <-- ADD THIS
-    verifyUserOTP, // <-- AND THIS,
+    requestUserRegistrationOTP, 
+    verifyUserOTP, 
     getProfile,
     updateProfile,
-    initiateChatPayment,
-    verifyChatPayment,
+    startChat,
     getUserChats,
     sendChatMessage,
     getSingleChat

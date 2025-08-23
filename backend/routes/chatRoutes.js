@@ -5,8 +5,7 @@ import authUser from "../middleware/authUser.js";
 // We will import ALL chat-related functions that a USER can perform
 // from the userController, where they are already defined.
 import { 
-    initiateChatPayment, 
-    verifyChatPayment,
+    startChat,
     getUserChats,
     sendChatMessage,
     getSingleChat
@@ -20,10 +19,9 @@ const chatRouter = express.Router();
 chatRouter.use(authUser);
 chatRouter.get("/single/:chatId", getSingleChat);
 
-// --- Payment Routes ---
-// These routes handle the start and verification of a paid chat session.
-chatRouter.post("/initiate", initiateChatPayment);
-chatRouter.post("/verify", verifyChatPayment);
+// --- Chat Start Route ---
+// This route handles the start of a chat session.
+chatRouter.post("/start", startChat);
 
 // --- Chat Management Routes ---
 // This route gets the list of all chat histories for the logged-in user.

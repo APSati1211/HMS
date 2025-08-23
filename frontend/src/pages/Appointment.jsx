@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import RelatedDoctors from '../components/RelatedDoctors';
 import { assets } from '../assets/assets';
-import RazorpayPaymentModal from '../components/RazorpayPaymentModal';
 import axios from 'axios'; // Ensure axios is imported
 import { toast } from 'react-toastify'; // Ensure toast is imported
 
@@ -25,15 +24,12 @@ const Appointment = () => {
         doctors, 
         currencySymbol, 
         token, 
-        backendUrl, // Get backendUrl from context
-        initiateChatPayment,
-        verifyChatPayment // Get verifyChatPayment from context
+        backendUrl,
+        startChat
     } = useContext(AppContext);
     
     const navigate = useNavigate();
     const [docInfo, setDocInfo] = useState(null);
-    const [showPaymentModal, setShowPaymentModal] = useState(false);
-    const [paymentDetails, setPaymentDetails] = useState(null);
     const [availability, setAvailability] = useState(true);
 
     useEffect(() => {
@@ -42,8 +38,6 @@ const Appointment = () => {
                 let doctor = doctors.find(doc => doc._id === docId);
                 
                 if (!doctor) {
-                    // --- BUG FIX #1: Correct API Endpoint ---
-                    // The correct public route is /api/doctor/profile/:id
                     const { data } = await axios.get(`${backendUrl}/api/doctor/profile/${docId}`);
                     if (data.success) {
                         doctor = data.profileData;
@@ -66,26 +60,22 @@ const Appointment = () => {
         }
     }, [docId, doctors, navigate, backendUrl]);
 
-    const handlePaymentInitiation = async () => {
+    const handleStartConsultation = async () => {
         if (!token) {
             navigate('/login', { state: { from: `/appointment/${docId}` } });
             return;
         }
 
         try {
-            const paymentData = await initiateChatPayment(docId);
-
-            // --- BUG FIX #2: Safety Check Before Opening Modal ---
-            // Only open the modal if the API call was successful and returned an order.
-            if (paymentData && paymentData.success) {
-                setPaymentDetails(paymentData);
-                setShowPaymentModal(true);
+            const data = await startChat(docId);
+            if (data.success) {
+                toast.success("Redirecting to chat...");
+                navigate(`/chat/${data.chat._id}`);
             } else {
-                // Show the error from the backend (e.g., "Not Authorized")
-                toast.error(paymentData.message || 'Could not initiate payment.');
+                toast.error(data.message || 'Could not start chat.');
             }
         } catch (error) {
-            console.error('Payment error:', error);
+            console.error('Error starting chat:', error);
             toast.error(error.response?.data?.message || 'A network error occurred.');
             if (error.response?.status === 400) {
                 setAvailability(false);
@@ -93,34 +83,9 @@ const Appointment = () => {
         }
     };
 
-    const handlePaymentSuccess = async (paymentResponse) => {
-        try {
-            // --- BUG FIX #3: Send doctorId along with payment data for verification ---
-            const dataToVerify = {
-                ...paymentResponse, // This contains razorpay_payment_id, etc.
-                doctorId: docId
-            };
-
-            const data = await verifyChatPayment(dataToVerify);
-
-            if (data.success) {
-                toast.success("Payment successful! Redirecting to chat...");
-                navigate(`/chat/${data.chat._id}`);
-            } else {
-                toast.error(data.message || "Payment verification failed.");
-            }
-        } catch (error) {
-            console.error('Verification failed:', error);
-            toast.error(error.response?.data?.message || "An error occurred during verification.");
-        } finally {
-            setShowPaymentModal(false);
-        }
-    };
-
     if (!docInfo) return <LoadingSpinner />;
 
     return (
-        // ... your JSX remains the same ...
         <div className="bg-gray-50 min-h-screen">
             <div className="container mx-auto py-12 px-4">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -166,7 +131,7 @@ const Appointment = () => {
                                 <p className="text-gray-600">{docInfo.about || 'No information available'}</p>
                             </div>
                             <button
-                                onClick={handlePaymentInitiation}
+                                onClick={handleStartConsultation}
                                 disabled={!availability}
                                 className={`w-full py-3 rounded-lg font-semibold ${
                                     availability
@@ -183,15 +148,6 @@ const Appointment = () => {
                     <h2 className="text-xl font-bold mb-4">Similar Doctors</h2>
                     <RelatedDoctors speciality={docInfo.speciality} currentDoctorId={docId} />
                 </div>
-                {showPaymentModal && paymentDetails && (
-                    <RazorpayPaymentModal
-                        paymentDetails={paymentDetails}
-                        onClose={() => setShowPaymentModal(false)}
-                        onSuccess={handlePaymentSuccess}
-                        doctorName={docInfo.name}
-                        amount={docInfo.fees}
-                    />
-                )}
             </div>
         </div>
     );

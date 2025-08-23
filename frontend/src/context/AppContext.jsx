@@ -82,30 +82,16 @@ const AppContextProvider = ({ children }) => {
         setActiveChats([]);
     };
 
-    const initiateChatPayment = async (doctorId) => {
+    const startChat = async (doctorId) => {
         try {
             const { data } = await axios.post(
-                `${backendUrl}/api/chats/initiate`,
+                `${backendUrl}/api/chats/start`,
                 { doctorId },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             return data;
         } catch (error) {
-            console.error('Payment initiation failed:', error);
-            throw error;
-        }
-    };
-
-    const verifyChatPayment = async (paymentData) => {
-        try {
-            const { data } = await axios.post(
-                `${backendUrl}/api/chats/verify`,
-                paymentData,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            return data;
-        } catch (error) {
-            console.error('Payment verification failed:', error);
+            console.error('Chat starting failed:', error);
             throw error;
         }
     };
@@ -139,8 +125,7 @@ const AppContextProvider = ({ children }) => {
             handleLogin,
             handleLogout,
             loadUserProfileData,
-            initiateChatPayment,
-            verifyChatPayment,
+            startChat,
             loadActiveChats
         }}>
             {children}
