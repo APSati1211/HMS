@@ -21,9 +21,14 @@ const Navbar = () => {
     { path: '/contact', label: 'CONTACT' },
     {
       path: 'https://doctoradmin-rouge.vercel.app/',
-      label: 'ADMIN',
+      label: 'DOCTORS LOGIN',
       isExternal: true, // Flag for external links
     },
+     {
+      path: 'https://doctorfrontnew.vercel.app/login',
+      label: 'PATIENT LOGIN',
+      isExternal: true, // Flag for external links
+    }
   ];
 
   return (
