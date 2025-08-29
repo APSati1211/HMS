@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+// 1. Import the ScrollToTop component
+import ScrollToTop from './components/ScrollToTop';
+
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Preloader from './components/Preloader';
@@ -33,6 +37,9 @@ const App = () => {
 
   return (
     <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      {/* 2. Add the component here. It will listen for route changes. */}
+      <ScrollToTop /> 
+      
       <ToastContainer 
         position="top-right"
         autoClose={3000}
@@ -63,7 +70,6 @@ const App = () => {
             <Route path='/my-profile' element={<MyProfile />} />
             <Route path='/chat/:chatId' element={<ChatPage />} />
             <Route path='/my-consultations' element={<MyConsultations />} />
-
           </Route>
         </Routes>
       </main>
